@@ -325,27 +325,131 @@ npm run type-check # Check TypeScript types
 
 ---
 
-### 3. Docker (Optional)
+### 3. Docker (Recommended for Production)
 
-Run LocalMind with Docker for simplified deployment:
+Run LocalMind with Docker for simplified deployment and consistent environments.
 
+#### Prerequisites
+
+- **Docker** (v20.10 or higher) - [Install Docker](https://docs.docker.com/get-docker/)
+- **Docker Compose** (v2.0 or higher) - Usually included with Docker Desktop
+
+Verify installation:
 ```bash
-# Build and run with Docker Compose
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
+docker --version
+docker compose version
 ```
 
-**Docker Compose includes:**
+#### Quick Start with Docker Compose
 
-- Node.js backend
-- React frontend
-- Nginx reverse proxy
-- Volume persistence
+1. **Configure environment variables:**
+   ```bash
+   cp env.example .env
+   # Edit .env with your preferred editor
+   nano .env
+   ```
+
+   **Required variables:**
+   - `LOCALMIND_SECRET` - Generate with: `openssl rand -base64 32`
+   - `JWT_SECRET` - Same as LOCALMIND_SECRET or generate separately
+   - `Your_Name`, `YOUR_EMAIL`, `YOUR_PASSWORD` - Admin credentials
+   - `DB_CONNECTION_STRING` - MongoDB connection string
+   - API keys for cloud providers (optional)
+
+2. **Build and start the application:**
+   ```bash
+   # Build and run (combined backend + frontend)
+   docker compose up -d
+
+   # View logs
+   docker compose logs -f localmind
+
+   # Check container status
+   docker compose ps
+   ```
+
+3. **Access the application:**
+   - Frontend & API: http://localhost:3000
+   - API endpoints: http://localhost:3000/api/v1
+
+#### Using Separate Services (Advanced)
+
+For independent scaling of backend and frontend:
+
+```bash
+# Use separate services configuration
+docker compose -f docker-compose.separate.yml up -d
+
+# Access:
+# - Frontend: http://localhost:80
+# - Backend API: http://localhost:3000
+```
+
+#### Docker Commands Reference
+
+```bash
+# Build the image
+docker build -t localmind:latest .
+
+# Run container manually
+docker run -d \
+  --name localmind-app \
+  -p 3000:3000 \
+  --env-file .env \
+  -v localmind-uploads:/app/uploads \
+  -v localmind-data:/app/data \
+  localmind:latest
+
+# Stop services
+docker compose down
+
+# Stop and remove volumes (⚠️ deletes data)
+docker compose down -v
+
+# Rebuild after code changes
+docker compose up -d --build
+
+# View logs
+docker compose logs -f
+
+# Execute commands in container
+docker compose exec localmind sh
+```
+
+#### Docker Features
+
+- ✅ **Multi-stage builds** - Optimized image size (~300MB)
+- ✅ **Non-root user** - Enhanced security
+- ✅ **Health checks** - Automatic container monitoring
+- ✅ **Volume persistence** - Data survives container restarts
+- ✅ **Environment variables** - Easy configuration
+- ✅ **Resource limits** - Prevent resource exhaustion
+
+#### Troubleshooting Docker
+
+**Container won't start:**
+```bash
+# Check logs
+docker compose logs localmind
+
+# Verify environment variables
+docker compose exec localmind env
+```
+
+**Port already in use:**
+```bash
+# Change port in docker-compose.yml
+ports:
+  - '8080:3000'  # Access via localhost:8080
+```
+
+**Permission errors:**
+```bash
+# Fix volume permissions
+docker compose exec localmind chown -R localmind:localmind /app/uploads /app/data
+```
+
+For more Docker details, see the [Docker Deployment Guide](#-docker-deployment-guide) section below.
 
 ---
 

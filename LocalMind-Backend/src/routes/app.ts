@@ -1,5 +1,6 @@
 import express from 'express'
 import path from 'path'
+import fs from 'fs'
 const app: express.Application = express()
 import logger from 'morgan'
 import cookieParser from 'cookie-parser'
@@ -21,7 +22,6 @@ app.use('/api', GoogleRoutes, userRoutes, DataSetRoutes, OllamaRouter, GroqRoute
 
 // Serve static files from public directory (for frontend in production)
 const publicPath = path.join(__dirname, '../../public')
-const fs = require('fs')
 if (fs.existsSync(publicPath)) {
   app.use(express.static(publicPath))
   
