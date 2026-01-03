@@ -1,7 +1,7 @@
-import { Router } from "express";
-import GroqController from "./Groq.controller";
-const router: Router = Router();
+import { Router } from 'express'
+import GroqController from './Groq.controller'
+const router: Router = Router()
 
-router.post("/v1/chat-with-groq", GroqController.generateChartWithGroq);
+router.post('/v1/chat-with-groq', GroqController.generateChartWithGroq)
 
-export { router as GroqRouter };
+export { router as GroqRouter }

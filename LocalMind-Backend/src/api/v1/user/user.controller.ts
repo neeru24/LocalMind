@@ -1,185 +1,161 @@
-import { Request, Response } from "express";
-import { ZodError } from "zod";
-import { userLoginSchema, userRegisterSchema } from "./user.validator";
-import userService from "./user.service";
-import { SendResponse } from "../../../utils/SendResponse.utils";
-import UserUtils from "./user.utils";
-import { IUser } from "./user.type";
-import jwt from "jsonwebtoken";
-import UserConstant from "./user.constant";
-import { StatusConstant } from "../../../constant/Status.constant";
-import { th } from "zod/v4/locales";
+import { Request, Response } from 'express'
+import { userLoginSchema, userRegisterSchema } from './user.validator'
+import userService from './user.service'
+import { SendResponse } from '../../../utils/SendResponse.utils'
+import UserUtils from './user.utils'
+import { IUser } from './user.type'
+import jwt from 'jsonwebtoken'
+import UserConstant from './user.constant'
+import { StatusConstant } from '../../../constant/Status.constant'
 
 class UserController {
-
-
   constructor() {
-    this.register = this.register.bind(this);
-    this.login = this.login.bind(this);
-    this.profile = this.profile.bind(this);
-    this.apiEndPointCreater = this.apiEndPointCreater.bind(this);
-    this.getApiKey = this.getApiKey.bind(this);
+    this.register = this.register.bind(this)
+    this.login = this.login.bind(this)
+    this.profile = this.profile.bind(this)
+    this.apiEndPointCreater = this.apiEndPointCreater.bind(this)
+    this.getApiKey = this.getApiKey.bind(this)
   }
 
   private setHeaderToken(res: Response, token: string): void {
-    res.setHeader("Authorization", `Bearer ${token}`);
-    res.cookie("token", token, {
+    res.setHeader('Authorization', `Bearer ${token}`)
+    res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    });
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    })
   }
-
 
   async register(req: Request, res: Response): Promise<void> {
     try {
-      const validatedData = await userRegisterSchema.parseAsync(req.body);
+      const validatedData = await userRegisterSchema.parseAsync(req.body)
 
       if (!req.body.password) {
-        throw new Error(UserConstant.PASSWORD_REQUIRED);
+        throw new Error(UserConstant.PASSWORD_REQUIRED)
       }
 
-      const user = await userService.createUser(validatedData);
+      const user = await userService.createUser(validatedData)
 
-      const { password, ...userObj } = user; 
+      const userObj = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      }
 
       const token = UserUtils.generateToken({
         userId: String(user._id),
         email: user.email,
         role: user.role,
-      });
+      })
 
-      this.setHeaderToken(res, token);
+      this.setHeaderToken(res, token)
 
-      SendResponse.success(
-        res,
-        UserConstant.CREATE_USER_SUCCESS,
-        { userObj, token },
-        201,
-      );
+      SendResponse.success(res, UserConstant.CREATE_USER_SUCCESS, { userObj }, 201)
     } catch (err: any) {
+  if (err?.code === 11000) {
+    SendResponse.error(
+      res,
+      UserConstant.EMAIL_ALREADY_EXISTS,
+      StatusConstant.CONFLICT
+    )
+    return
+  }
 
-      SendResponse.error(res, err.message || UserConstant.CREATE_USER_FAILED, 500, err);
-
-    }
+  SendResponse.error(
+    res,
+    err.message || UserConstant.CREATE_USER_FAILED,
+    StatusConstant.INTERNAL_SERVER_ERROR,
+    err
+  )
+}
   }
 
   async login(req: Request, res: Response): Promise<void> {
     try {
-      const validatedData = userLoginSchema.parse(req.body);
+      const validatedData = userLoginSchema.parse(req.body)
 
-      const user = await UserUtils.findByEmailandCheckPassword(validatedData);
+      const user = await UserUtils.findByEmailandCheckPassword(validatedData)
 
       const token = UserUtils.generateToken({
-        userId: user.userObj._id || "",
+        userId: user.userObj._id || '',
         email: user.userObj.email,
         role: user.userObj.role,
-      });
+      })
 
-      this.setHeaderToken(res, token);
+      this.setHeaderToken(res, token)
 
-      SendResponse.success(res, UserConstant.LOGIN_USER_SUCCESS, { user, token }, StatusConstant.OK);
-
+      SendResponse.success(res, UserConstant.LOGIN_USER_SUCCESS, { user, token }, StatusConstant.OK)
     } catch (err: any) {
-      SendResponse.error(res, err.message || UserConstant.INVALID_CREDENTIALS, 401, err);
+      SendResponse.error(res, err.message || UserConstant.INVALID_CREDENTIALS, 401, err)
     }
   }
 
   async profile(req: Request, res: Response): Promise<void> {
     try {
-    
-      const token =  req.headers.authorization?.split(" ")[1] || req.cookies?.token;
+      const token = req.headers.authorization?.split(' ')[1] || req.cookies?.token
 
       if (!token) {
-        throw new Error(UserConstant.TOKEN_MISSING);
+        throw new Error(UserConstant.TOKEN_MISSING)
       }
-
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
-        userId: string;
-      };
-
-
-      const user = await UserUtils.findById(decoded.userId);
-
-      if (!user) {
-        throw new Error(UserConstant.USER_NOT_FOUND);
+        userId: string
       }
 
-      const userObj: Partial<IUser> = { ...user };
-      delete userObj.password;
+      const user = await UserUtils.findById(decoded.userId)
 
-      SendResponse.success(res, UserConstant.USER_PROFILE_SUCCESS, userObj, 200);
+      if (!user) {
+        throw new Error(UserConstant.USER_NOT_FOUND)
+      }
+
+      const userObj: Partial<IUser> = { ...user }
+      delete userObj.password
+
+      SendResponse.success(res, UserConstant.USER_PROFILE_SUCCESS, userObj, 200)
     } catch (err: any) {
-      if (err.name === "JsonWebTokenError") {
-        SendResponse.error(res, UserConstant.INVALID_TOKEN, 401);
+      if (err.name === 'JsonWebTokenError') {
+        SendResponse.error(res, UserConstant.INVALID_TOKEN, 401)
       } else {
-        SendResponse.error(
-          res,
-          err.message || UserConstant.USER_PROFILE_FAILED,
-          500,
-          err,
-        );
+        SendResponse.error(res, err.message || UserConstant.USER_PROFILE_FAILED, 500, err)
       }
     }
   }
 
   async apiEndPointCreater(req: Request, res: Response): Promise<void> {
     try {
-
-
       if (!req.user) {
-          throw new Error(UserConstant.INVALID_INPUT);
+        throw new Error(UserConstant.INVALID_INPUT)
       }
 
-      const apiKey = await userService.apiKeyCreater(req.user as IUser);
+      const apiKey = await userService.apiKeyCreater(req.user as IUser)
 
-      SendResponse.success(
-        res,
-       UserConstant.GENERATE_API_KEY_SUCCESS,
-        { apiKey },
-        200,
-      );
+      SendResponse.success(res, UserConstant.GENERATE_API_KEY_SUCCESS, { apiKey }, 200)
     } catch (err: any) {
-  
-      SendResponse.error(
-        res,
-        err.message || UserConstant.GENERATE_API_KEY_FAILED,
-        500,
-        err,
-      );
+      SendResponse.error(res, err.message || UserConstant.GENERATE_API_KEY_FAILED, 500, err)
     }
   }
- async getApiKey(req: Request, res: Response): Promise<void> {
+  async getApiKey(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user?._id;
-
-
-
+      const userId = req.user?._id
 
       if (!userId) {
-        throw new Error(UserConstant.INVALID_INPUT);
+        throw new Error(UserConstant.INVALID_INPUT)
       }
 
-      const user = await UserUtils.findById(userId);
-
-
-
+      const user = await UserUtils.findById(userId)
 
       if (!user || !user.apikey) {
-        throw new Error(UserConstant.API_KEY_NOT_FOUND);
+        throw new Error(UserConstant.API_KEY_NOT_FOUND)
       }
 
-      const maskedKey = UserUtils.maskApiKey(user.apikey);
+      const maskedKey = UserUtils.maskApiKey(user.apikey)
 
-      SendResponse.success(res, UserConstant.API_KEY_FETCHED, { apiKey: maskedKey }, 200);
+      SendResponse.success(res, UserConstant.API_KEY_FETCHED, { apiKey: maskedKey }, 200)
     } catch (err: any) {
-      SendResponse.error(res, err.message || UserConstant.SERVER_ERROR, 500, err);
+      SendResponse.error(res, err.message || UserConstant.SERVER_ERROR, 500, err)
     }
   }
-  
-
-
 }
 
-export default new UserController();
+export default new UserController()

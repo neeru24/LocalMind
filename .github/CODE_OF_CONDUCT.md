@@ -16,20 +16,20 @@ We pledge to act and interact in ways that contribute to an open, welcoming, div
 
 Examples of behavior that contributes to a positive environment for our community include:
 
-* Demonstrating empathy and kindness toward other people
-* Being respectful of differing opinions, viewpoints, and experiences
-* Giving and gracefully accepting constructive feedback
-* Accepting responsibility and apologizing when necessary
-* Focusing on what is best for the community
-* Using welcoming and inclusive language
+- Demonstrating empathy and kindness toward other people
+- Being respectful of differing opinions, viewpoints, and experiences
+- Giving and gracefully accepting constructive feedback
+- Accepting responsibility and apologizing when necessary
+- Focusing on what is best for the community
+- Using welcoming and inclusive language
 
 Examples of unacceptable behavior include:
 
-* Harassment, discrimination, or derogatory comments
-* Trolling, insulting or disrespectful comments
-* Publishing others’ private information without permission
-* Unwanted sexual attention or advances
-* Any conduct that can be reasonably considered inappropriate in a professional setting
+- Harassment, discrimination, or derogatory comments
+- Trolling, insulting or disrespectful comments
+- Publishing others’ private information without permission
+- Unwanted sexual attention or advances
+- Any conduct that can be reasonably considered inappropriate in a professional setting
 
 ---
 
@@ -45,12 +45,13 @@ They have the right and responsibility to remove or edit contributions that viol
 
 This Code of Conduct applies to:
 
-* All project spaces
-* Public communication channels
-* One-on-one interactions related to the project
-* Any area where the project or its community is represented
+- All project spaces
+- Public communication channels
+- One-on-one interactions related to the project
+- Any area where the project or its community is represented
 
 ---
+
 ## Enforcement Guidelines
 
 ### 1. Correction
@@ -77,4 +78,3 @@ This Code of Conduct is adapted from the **Contributor Covenant** version **2.1*
 Available at: [https://www.contributor-covenant.org/version/2/1/code_of_conduct.html](https://www.contributor-covenant.org/version/2/1/code_of_conduct.html)
 
 ---
-

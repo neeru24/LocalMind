@@ -72,6 +72,7 @@
 ### Why LocalMind?
 
 **Traditional AI platforms lock you in with:**
+
 - 💸 Monthly subscription fees
 - 🚫 Message and usage limits
 - 🔍 Privacy concerns with data collection
@@ -79,6 +80,7 @@
 - 🔒 Vendor lock-in
 
 **LocalMind sets you free with:**
+
 - ✅ **100% Free & Open Source** — No hidden costs, ever
 - ✅ **Unlimited Usage** — No message caps or rate limits
 - ✅ **Full Privacy** — Your data never leaves your machine
@@ -108,13 +110,13 @@ LocalMind provides a unified interface to interact with both **local** and **clo
 
 Run powerful open-source models completely offline:
 
-| Model Family | Description | Use Cases |
-|-------------|-------------|-----------|
-| **LLaMA** | Meta's flagship open model | General chat, reasoning, coding |
-| **Mistral** | High-performance 7B model | Fast responses, efficiency |
-| **Phi** | Microsoft's compact model | Edge devices, quick tasks |
-| **Gemma** | Google's open model | Balanced performance |
-| **Custom Models** | Any Ollama-compatible model | Specialized tasks |
+| Model Family      | Description                 | Use Cases                       |
+| ----------------- | --------------------------- | ------------------------------- |
+| **LLaMA**         | Meta's flagship open model  | General chat, reasoning, coding |
+| **Mistral**       | High-performance 7B model   | Fast responses, efficiency      |
+| **Phi**           | Microsoft's compact model   | Edge devices, quick tasks       |
+| **Gemma**         | Google's open model         | Balanced performance            |
+| **Custom Models** | Any Ollama-compatible model | Specialized tasks               |
 
 #### ☁️ Cloud Models
 
@@ -167,10 +169,10 @@ Share your LocalMind instance with anyone, anywhere:
 
 #### Exposure Methods
 
-| Method | Speed | Custom Domain | Security |
-|--------|-------|---------------|----------|
-| **LocalTunnel** | Fast | ✅ | Basic |
-| **Ngrok** | Fast | ✅ Pro | Advanced |
+| Method          | Speed | Custom Domain | Security |
+| --------------- | ----- | ------------- | -------- |
+| **LocalTunnel** | Fast  | ✅            | Basic    |
+| **Ngrok**       | Fast  | ✅ Pro        | Advanced |
 
 #### Benefits
 
@@ -246,12 +248,12 @@ For detailed setup instructions, see the [Installation Guide](#-installation-gui
 
 Ensure you have the following installed:
 
-| Software | Version | Download |
-|----------|---------|----------|
-| **Node.js** | 18.x or higher | [nodejs.org](https://nodejs.org/) |
-| **npm** | 9.x or higher | Included with Node.js |
-| **Git** | Latest | [git-scm.com](https://git-scm.com/) |
-| **Ollama** (optional) | Latest | [ollama.ai](https://ollama.ai/) |
+| Software              | Version        | Download                            |
+| --------------------- | -------------- | ----------------------------------- |
+| **Node.js**           | 18.x or higher | [nodejs.org](https://nodejs.org/)   |
+| **npm**               | 9.x or higher  | Included with Node.js               |
+| **Git**               | Latest         | [git-scm.com](https://git-scm.com/) |
+| **Ollama** (optional) | Latest         | [ollama.ai](https://ollama.ai/)     |
 
 #### Verify Installation
 
@@ -339,8 +341,9 @@ docker-compose down
 ```
 
 **Docker Compose includes:**
+
 - Node.js backend
-- React frontend  
+- React frontend
 - Nginx reverse proxy
 - Volume persistence
 
@@ -545,6 +548,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -611,6 +615,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -685,6 +690,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -755,6 +761,7 @@ description: "Quarterly sales figures"
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -839,6 +846,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -902,69 +910,71 @@ Authorization: Bearer YOUR_JWT_TOKEN
 
 ```javascript
 // Initialize client
-const API_URL = 'http://localhost:3000/api/v1';
-const token = 'your-jwt-token';
+const API_URL = 'http://localhost:3000/api/v1'
+const token = 'your-jwt-token'
 
 // Send message
 const response = await fetch(`${API_URL}/chat/send-message`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify({
     message: 'Explain machine learning in simple terms',
-    model: 'gemini-pro'
-  })
-});
+    model: 'gemini-pro',
+  }),
+})
 
-const data = await response.json();
-console.log(data.data.response);
+const data = await response.json()
+console.log(data.data.response)
 ```
 
 ### Example 2: Upload and Train with Custom Data
 
 ```javascript
 // Upload Excel file
-const formData = new FormData();
-formData.append('file', fileInput.files[0]);
-formData.append('name', 'Company Knowledge Base');
+const formData = new FormData()
+formData.append('file', fileInput.files[0])
+formData.append('name', 'Company Knowledge Base')
 
 const uploadResponse = await fetch(`${API_URL}/upload/excel`, {
   method: 'POST',
   headers: {
-    'Authorization': `Bearer ${token}`
+    Authorization: `Bearer ${token}`,
   },
-  body: formData
-});
+  body: formData,
+})
 
-const { data: { fileId } } = await uploadResponse.json();
+const {
+  data: { fileId },
+} = await uploadResponse.json()
 
 // Train model with uploaded data
 const trainResponse = await fetch(`${API_URL}/train/upload`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify({
     fileId,
-    chunkSize: 500
-  })
-});
+    chunkSize: 500,
+  }),
+})
 
 // Use RAG-enhanced chat
 const chatResponse = await fetch(`${API_URL}/chat/send-message`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify({
     message: 'What does our policy say about remote work?',
-    useRAG: true
-  })
-});
+    useRAG: true,
+  }),
+})
 ```
 
 ### Example 3: Streaming Responses
@@ -972,16 +982,16 @@ const chatResponse = await fetch(`${API_URL}/chat/send-message`, {
 ```javascript
 const eventSource = new EventSource(
   `${API_URL}/chat/stream?token=${token}&message=Write a story about AI`
-);
+)
 
 eventSource.onmessage = (event) => {
-  const chunk = JSON.parse(event.data);
-  console.log(chunk.content); // Display chunk in real-time
-};
+  const chunk = JSON.parse(event.data)
+  console.log(chunk.content) // Display chunk in real-time
+}
 
 eventSource.onerror = () => {
-  eventSource.close();
-};
+  eventSource.close()
+}
 ```
 
 ### Example 4: Expose Your AI Globally
@@ -992,15 +1002,17 @@ const exposeResponse = await fetch(`${API_URL}/expose/localtunnel`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify({
-    subdomain: 'my-ai-demo'
-  })
-});
+    subdomain: 'my-ai-demo',
+  }),
+})
 
-const { data: { url } } = await exposeResponse.json();
-console.log(`Your AI is now accessible at: ${url}`);
+const {
+  data: { url },
+} = await exposeResponse.json()
+console.log(`Your AI is now accessible at: ${url}`)
 ```
 
 ---
@@ -1009,29 +1021,29 @@ console.log(`Your AI is now accessible at: ${url}`);
 
 ### Backend
 
-| Technology | Purpose | Version |
-|-----------|---------|---------|
-| **Node.js** | Runtime environment | 18+ |
-| **Express** | Web framework | 4.x |
-| **TypeScript** | Type safety | 5.x |
-| **Prisma / MongoDB** | Database ORM | Latest |
-| **JWT** | Authentication | Latest |
-| **Multer** | File uploads | Latest |
-| **LangChain** | RAG implementation | Latest |
-| **Ollama SDK** | Local LLM integration | Latest |
+| Technology           | Purpose               | Version |
+| -------------------- | --------------------- | ------- |
+| **Node.js**          | Runtime environment   | 18+     |
+| **Express**          | Web framework         | 4.x     |
+| **TypeScript**       | Type safety           | 5.x     |
+| **Prisma / MongoDB** | Database ORM          | Latest  |
+| **JWT**              | Authentication        | Latest  |
+| **Multer**           | File uploads          | Latest  |
+| **LangChain**        | RAG implementation    | Latest  |
+| **Ollama SDK**       | Local LLM integration | Latest  |
 
 ### Frontend
 
-| Technology | Purpose | Version |
-|-----------|---------|---------|
-| **React** | UI framework | 18+ |
-| **TypeScript** | Type safety | 5.x |
-| **Vite** | Build tool | 5.x |
-| **TailwindCSS** | Styling | 3.x |
-| **Zustand** | State management | Latest |
-| **React Query** | Data fetching | Latest |
-| **React Router** | Navigation | 6.x |
-| **Axios** | HTTP client | Latest |
+| Technology       | Purpose          | Version |
+| ---------------- | ---------------- | ------- |
+| **React**        | UI framework     | 18+     |
+| **TypeScript**   | Type safety      | 5.x     |
+| **Vite**         | Build tool       | 5.x     |
+| **TailwindCSS**  | Styling          | 3.x     |
+| **Zustand**      | State management | Latest  |
+| **React Query**  | Data fetching    | Latest  |
+| **React Router** | Navigation       | 6.x     |
+| **Axios**        | HTTP client      | Latest  |
 
 ### AI & ML
 
@@ -1053,6 +1065,7 @@ console.log(`Your AI is now accessible at: ${url}`);
 **Problem:** `Error: Cannot find module 'express'`
 
 **Solution:**
+
 ```bash
 cd server
 rm -rf node_modules package-lock.json
@@ -1065,6 +1078,7 @@ npm run dev
 **Problem:** `Error: ECONNREFUSED localhost:11434`
 
 **Solution:**
+
 - Ensure Ollama is installed and running: `ollama serve`
 - Check Ollama status: `ollama list`
 - Verify OLLAMA_HOST in `.env`
@@ -1074,6 +1088,7 @@ npm run dev
 **Problem:** `Error: File size exceeds limit`
 
 **Solution:**
+
 - Check MAX_FILE_SIZE in `.env`
 - Increase the limit if needed
 - Compress large files before uploading
@@ -1083,6 +1098,7 @@ npm run dev
 **Problem:** AI doesn't use uploaded data
 
 **Solution:**
+
 - Verify file was processed: `GET /api/v1/upload/status/:fileId`
 - Ensure `useRAG: true` in chat request
 - Check vector database path in `.env`
@@ -1092,6 +1108,7 @@ npm run dev
 **Problem:** `Access-Control-Allow-Origin` error
 
 **Solution:**
+
 - Update CORS_ORIGIN in server `.env`
 - Restart backend server
 - Check frontend URL matches CORS_ORIGIN
@@ -1151,6 +1168,7 @@ We ❤️ contributions! Here's how you can help:
 ### Development Workflow
 
 1. **Fork the repository**
+
    ```bash
    # Click "Fork" on GitHub, then:
    git clone https://github.com/YOUR_USERNAME/LocalMind.git
@@ -1158,6 +1176,7 @@ We ❤️ contributions! Here's how you can help:
    ```
 
 2. **Create a feature branch**
+
    ```bash
    git checkout -b feature/amazing-feature
    ```
@@ -1169,6 +1188,7 @@ We ❤️ contributions! Here's how you can help:
    - Update documentation
 
 4. **Test your changes**
+
    ```bash
    npm run test
    npm run lint
@@ -1176,6 +1196,7 @@ We ❤️ contributions! Here's how you can help:
    ```
 
 5. **Commit with conventional commits**
+
    ```bash
    git commit -m "feat: add amazing feature"
    git commit -m "fix: resolve bug in chat"
@@ -1236,10 +1257,10 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 ✅ **Commercial use** — Use LocalMind in commercial projects  
 ✅ **Modification** — Modify the code as you see fit  
 ✅ **Distribution** — Share LocalMind with others  
-✅ **Private use** — Use it privately in your organization  
+✅ **Private use** — Use it privately in your organization
 
 ⚠️ **Limitation of liability** — Use at your own risk  
-⚠️ **No warranty** — Provided "as is"  
+⚠️ **No warranty** — Provided "as is"
 
 **Attribution appreciated but not required!** If you build something cool with LocalMind, let us know — we'd love to feature it!
 
@@ -1378,6 +1399,7 @@ Before you begin, ensure you have installed:
 - **Docker Compose** (v2.0 or higher) - Usually included with Docker Desktop
 
 Verify installation:
+
 ```bash
 docker --version
 docker compose version
@@ -1390,22 +1412,25 @@ docker compose version
 ### Option 1: Using Docker Compose (Recommended)
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/your-username/LocalMind.git
    cd LocalMind
    ```
 
 2. **Configure environment variables:**
+
    ```bash
    cp .env.example .env
    nano .env  # Edit with your preferred editor
    ```
-   
+
    **Required variables to set:**
    - `LOCALMIND_SECRET` - Generate with: `openssl rand -base64 32`
    - Add API keys for cloud providers (optional)
 
 3. **Start the application:**
+
    ```bash
    docker compose up -d
    ```
@@ -1422,11 +1447,13 @@ docker compose version
 ### Option 2: Using Docker CLI
 
 1. **Build the image:**
+
    ```bash
    docker build -t localmind:latest .
    ```
 
 2. **Run the container:**
+
    ```bash
    docker run -d \
      --name localmind-app \
@@ -1450,18 +1477,19 @@ docker compose version
 
 Create a `.env` file in the project root with the following variables:
 
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `NODE_ENV` | Environment mode | No | `production` |
-| `PORT` | Application port | No | `3000` |
-| `LOCALMIND_SECRET` | JWT secret key | **Yes** | - |
-| `API_KEY` | Generic API key | No | - |
-| `OPENAI_API_KEY` | OpenAI API key | No | - |
-| `GEMINI_API_KEY` | Google Gemini key | No | - |
-| `GROQ_API_KEY` | Groq API key | No | - |
-| `OLLAMA_HOST` | Ollama server URL | No | `http://host.docker.internal:11434` |
+| Variable           | Description       | Required | Default                             |
+| ------------------ | ----------------- | -------- | ----------------------------------- |
+| `NODE_ENV`         | Environment mode  | No       | `production`                        |
+| `PORT`             | Application port  | No       | `3000`                              |
+| `LOCALMIND_SECRET` | JWT secret key    | **Yes**  | -                                   |
+| `API_KEY`          | Generic API key   | No       | -                                   |
+| `OPENAI_API_KEY`   | OpenAI API key    | No       | -                                   |
+| `GEMINI_API_KEY`   | Google Gemini key | No       | -                                   |
+| `GROQ_API_KEY`     | Groq API key      | No       | -                                   |
+| `OLLAMA_HOST`      | Ollama server URL | No       | `http://host.docker.internal:11434` |
 
 **Generate a secure secret:**
+
 ```bash
 openssl rand -base64 32
 ```
@@ -1469,11 +1497,13 @@ openssl rand -base64 32
 ### Connecting to Ollama
 
 **If Ollama runs on your host machine:**
+
 ```env
 OLLAMA_HOST=http://host.docker.internal:11434
 ```
 
 **If Ollama runs in Docker (uncomment the ollama service in docker-compose.yml):**
+
 ```env
 OLLAMA_HOST=http://ollama:11434
 ```
@@ -1573,11 +1603,13 @@ docker system prune -a --volumes
 ### Container won't start
 
 **Check logs:**
+
 ```bash
 docker logs localmind-app
 ```
 
 **Common issues:**
+
 - Missing required environment variables
 - Port 3000 already in use
 - Insufficient permissions
@@ -1597,11 +1629,13 @@ ports:
 ### Can't connect to Ollama
 
 1. **Verify Ollama is running:**
+
    ```bash
    curl http://localhost:11434/api/version
    ```
 
 2. **Check Docker network:**
+
    ```bash
    docker network inspect localmind-network
    ```
@@ -1620,9 +1654,11 @@ docker exec -it localmind-app chown -R localmind:localmind /app/uploads /app/dat
 ### Out of memory
 
 **Increase Docker resources:**
+
 - Docker Desktop → Settings → Resources → Memory (increase to 4GB+)
 
 **Or limit container memory:**
+
 ```bash
 docker run -d -p 3000:3000 \
   --memory="2g" \
@@ -1635,12 +1671,14 @@ docker run -d -p 3000:3000 \
 ## 🔒 Security Best Practices
 
 1. **Never commit `.env` files:**
+
    ```bash
    # Ensure .env is in .gitignore
    echo ".env" >> .gitignore
    ```
 
 2. **Use strong secrets:**
+
    ```bash
    # Generate secure random secret
    openssl rand -base64 32
@@ -1651,6 +1689,7 @@ docker run -d -p 3000:3000 \
    - User `localmind` (UID 1001) is used
 
 4. **Keep images updated:**
+
    ```bash
    docker pull node:20-alpine
    docker compose build --no-cache
@@ -1668,11 +1707,13 @@ docker run -d -p 3000:3000 \
 ### Using Docker Compose (Production)
 
 1. **Create production docker-compose:**
+
    ```bash
    cp docker-compose.yml docker-compose.prod.yml
    ```
 
 2. **Update production settings:**
+
    ```yaml
    environment:
      - NODE_ENV=production
@@ -1687,6 +1728,7 @@ docker run -d -p 3000:3000 \
 ### Behind a Reverse Proxy (Nginx/Traefik)
 
 **Example Nginx configuration:**
+
 ```nginx
 server {
     listen 80;
@@ -1724,6 +1766,7 @@ curl http://localhost:3000/health
 ### Multi-stage Build Benefits
 
 The Dockerfile uses multi-stage builds to:
+
 - Reduce final image size by ~60%
 - Separate build and runtime dependencies
 - Improve build caching
@@ -1768,6 +1811,7 @@ If you encounter issues:
 ### [v1.0.0] - 2024-01-15
 
 #### Added
+
 - 🎉 Initial release of LocalMind
 - 🧠 Support for Ollama local models
 - ☁️ Cloud AI integrations (Gemini, OpenAI, Groq, RouterAI)
@@ -1779,6 +1823,7 @@ If you encounter issues:
 - 🎨 Modern React UI with Tailwind CSS
 
 #### Security
+
 - Implemented bcrypt password hashing
 - Added CORS protection
 - Rate limiting for API endpoints

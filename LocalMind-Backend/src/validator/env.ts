@@ -1,34 +1,34 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 export const EnvSchema = z.object({
-  PORT: z.string().default("5000"),
-  HOST: z.string().default("localhost"),
-  APP_ENV: z.enum(["development", "production", "test"]).default("development"),
+  PORT: z.string().default('5000'),
+  HOST: z.string().default('localhost'),
+  APP_ENV: z.enum(['development', 'production', 'test']).default('development'),
   DEBUG: z
     .string()
-    .transform((v) => v === "true")
+    .transform((v) => v === 'true')
     .default(true),
   Your_Name: z.string(),
   YOUR_EMAIL: z.email(),
   YOUR_PASSWORD: z.string(),
-  LOG_LEVEL: z.string().default("debug"),
+  LOG_LEVEL: z.string().default('debug'),
   GROQ_API_KEY: z.string(),
 
   CORS_ENABLED: z
     .string()
-    .transform((v) => v === "true")
+    .transform((v) => v === 'true')
     .default(true),
   RATE_LIMIT_ENABLED: z
     .string()
-    .transform((v) => v === "true")
+    .transform((v) => v === 'true')
     .default(false),
   ENABLE_RATE_LIMITING: z
     .string()
-    .transform((v) => v === "true")
+    .transform((v) => v === 'true')
     .default(false),
 
   JWT_SECRET: z.string(),
-  JWT_EXPIRATION: z.string().default("7d"),
+  JWT_EXPIRATION: z.string().default('7d'),
 
   DB_HOST: z.string(),
   DB_PORT: z.string(),
@@ -51,5 +51,5 @@ export const EnvSchema = z.object({
 
   GOOGLE_API_KEY: z.string().optional(),
   OPENAI_API_KEY: z.string().optional(),
-  BACKEND_URL: z.string().default("http://localhost:5000"),
-});
+  BACKEND_URL: z.string().default('http://localhost:5000'),
+})

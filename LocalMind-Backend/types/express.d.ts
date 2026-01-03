@@ -1,7 +1,7 @@
-import { IUser } from "../src/api/v1/user/user.type";
+import { IUser } from '../src/api/v1/user/user.type'
 
-declare module "express" {
+declare module 'express' {
   export interface Request {
-    user?: IUser;
+    user?: IUser
   }
 }

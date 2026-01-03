@@ -1,31 +1,30 @@
-import * as fs from "fs";
-import * as path from "path";
-import { PromptTemplate } from "@langchain/core/prompts";
-import { LangchainPromptTemplate } from "../../../../Template/v1/Ai.template";
+import * as fs from 'fs'
+import * as path from 'path'
+import { PromptTemplate } from '@langchain/core/prompts'
 
 class DatasetUtils {
   async Prepare_PromptTemplate(): Promise<any> {
     try {
-      let path_to_prompt = path.resolve(
-        "./src/api/DataSet/v1/Prompt/question_answer_extractor_prompt.txt",
-      );
+      const path_to_prompt = path.resolve(
+        './src/api/DataSet/v1/Prompt/question_answer_extractor_prompt.txt'
+      )
 
-      let promptText = await fs.readFileSync(path_to_prompt, "utf-8");
+      let promptText = await fs.readFileSync(path_to_prompt, 'utf-8')
 
       // Escape all single { and } that are not variable placeholders
       // Replace all { with {{ and } with }} except for {userName} and {userPrompt}
       promptText = promptText
-        .replace(/({)(?!userName\}|userPrompt\})/g, "{{")
-        .replace(/(?<!\{userName|userPrompt)(})/g, "}}");
+        .replace(/({)(?!userName\}|userPrompt\})/g, '{{')
+        .replace(/(?<!\{userName|userPrompt)(})/g, '}}')
 
-      let Prompt = PromptTemplate.fromTemplate(promptText);
+      const Prompt = PromptTemplate.fromTemplate(promptText)
 
-      return Prompt;
+      return Prompt
     } catch (error) {
-      console.error("Error in Prepate_Prompt:", error);
-      throw error;
+      console.error('Error in Prepate_Prompt:', error)
+      throw error
     }
   }
 }
 
-export default new DatasetUtils();
+export default new DatasetUtils()

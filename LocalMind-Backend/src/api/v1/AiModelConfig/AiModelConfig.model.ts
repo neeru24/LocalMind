@@ -1,6 +1,6 @@
-import { Schema, Document, Types, model } from "mongoose";
-import { IAgent, IAiModelConfig } from "./AiModelConfig.type";
-import { AvailableAiModelConfigAgents } from "./AiModelConfig.constant";
+import { Schema, Types, model } from 'mongoose'
+import { IAgent, IAiModelConfig } from './AiModelConfig.type'
+import { AvailableAiModelConfigAgents } from './AiModelConfig.constant'
 
 const AgentSchema = new Schema<IAgent>({
   provider: {
@@ -11,7 +11,7 @@ const AgentSchema = new Schema<IAgent>({
   type: {
     type: String,
     required: true,
-    enum: ["cloud", "on-premise"],
+    enum: ['cloud', 'on-premise'],
   },
   model: {
     type: String,
@@ -21,38 +21,35 @@ const AgentSchema = new Schema<IAgent>({
     type: String,
     select: false,
   },
-});
+})
 
 const AiModelConfigSchema = new Schema<IAiModelConfig>(
   {
     userId: {
       type: Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     agents: {
       type: [AgentSchema],
       validate: {
         validator: (agents: IAgent[]) => agents.length > 0,
-        message: "At least one agent is required.",
+        message: 'At least one agent is required.',
       },
     },
     system_prompt: {
       type: String,
       required: true,
       default:
-        "You are a helpful AI assistant trained to answer customer support questions accurately and politely.",
+        'You are a helpful AI assistant trained to answer customer support questions accurately and politely.',
     },
   },
   {
     timestamps: true,
     versionKey: false,
-  },
-);
+  }
+)
 
-const AiModelConfig = model<IAiModelConfig>(
-  "AiModelConfig",
-  AiModelConfigSchema,
-);
+const AiModelConfig = model<IAiModelConfig>('AiModelConfig', AiModelConfigSchema)
 
-export default AiModelConfig;
+export default AiModelConfig

@@ -1,5 +1,5 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
-import { IUser } from "./user.type";
+import mongoose, { Schema, Model } from 'mongoose'
+import { IUser } from './user.type'
 
 const userSchema: Schema<IUser> = new Schema<IUser>(
   {
@@ -20,7 +20,7 @@ const userSchema: Schema<IUser> = new Schema<IUser>(
     },
     role: {
       type: String,
-      default: "user",
+      default: 'user',
     },
     apikey: {
       type: String,
@@ -35,9 +35,9 @@ const userSchema: Schema<IUser> = new Schema<IUser>(
       default: null,
     },
   },
-  { timestamps: true },
-);
+  { timestamps: true }
+)
 
-const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
+const User: Model<IUser> = mongoose.model<IUser>('User', userSchema)
 
-export default User;
+export default User
