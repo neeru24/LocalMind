@@ -12,6 +12,12 @@ const AppRoutes: React.FC = () => {
       {/* Sign Up / Login Page */}
       <Route path="/login" element={<LoginPage />} />
 
+      {/* Register Page - TODO: Create dedicated RegisterPage component */}
+      <Route path="/register" element={<LoginPage />} />
+
+      {/* Forgot Password Page - TODO: Create ForgotPasswordPage component */}
+      <Route path="/forgot-password" element={<LoginPage />} />
+
       {/* Chat Page */}
     </Routes>
   )
