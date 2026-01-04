@@ -26,6 +26,14 @@ const Navbar: React.FC = () => {
         <NavLink to="/play-ground" className={navLinkClass}>
           PlayGround
         </NavLink>
+        <NavLink
+          to="/training"
+          className={({ isActive }) =>
+            isActive ? 'text-white line-through opacity-80' : 'text-white'
+          }
+        >
+          Training
+        </NavLink>
       </div>
 
       <NavLink

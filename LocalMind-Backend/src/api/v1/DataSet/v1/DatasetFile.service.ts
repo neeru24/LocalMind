@@ -112,17 +112,17 @@ class DatasetFileService {
       const results: any[] = []
       fs.createReadStream(filePath)
         .pipe(csv())
-        .on('data', (data) => results.push(data))
+        .on('data', data => results.push(data))
         .on('end', () => resolve(results))
-        .on('error', (err) => reject(err))
+        .on('error', err => reject(err))
     })
   }
 
   private async parseText(filePath: string): Promise<any[]> {
     const content = fs.readFileSync(filePath, 'utf-8')
     // Simple chunking for text files: split by double newlines
-    const chunks = content.split(/\n\s*\n/).filter((c) => c.trim().length > 0)
-    return chunks.map((chunk) => ({
+    const chunks = content.split(/\n\s*\n/).filter(c => c.trim().length > 0)
+    return chunks.map(chunk => ({
       question: chunk.substring(0, 100) + '...', // Use start of chunk as "question"
       answer: chunk,
     }))
@@ -139,8 +139,8 @@ class DatasetFileService {
     const dataBuffer = fs.readFileSync(filePath)
     const data = await pdf(dataBuffer)
     // Similar to text, split by double newlines
-    const chunks = data.text.split(/\n\s*\n/).filter((c) => c.trim().length > 0)
-    return chunks.map((chunk) => ({
+    const chunks = data.text.split(/\n\s*\n/).filter(c => c.trim().length > 0)
+    return chunks.map(chunk => ({
       question: chunk.substring(0, 100) + '...',
       answer: chunk,
     }))

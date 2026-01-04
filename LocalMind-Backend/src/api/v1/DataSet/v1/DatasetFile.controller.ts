@@ -19,7 +19,12 @@ class DatasetFileController {
       const userId = (req as any).user?._id
       const fileRecord = await DatasetFileService.saveFileMetadata(userId, req.file)
 
-      SendResponse.success(res, 'File uploaded successfully. You can now trigger processing.', fileRecord, 201)
+      SendResponse.success(
+        res,
+        'File uploaded successfully. You can now trigger processing.',
+        fileRecord,
+        201
+      )
     } catch (error: any) {
       SendResponse.error(res, 'File upload failed', 500, error)
     }
@@ -32,9 +37,9 @@ class DatasetFileController {
   public async process(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params
-      
+
       // Start processing in the background
-      DatasetFileService.processFile(id).catch((err) => {
+      DatasetFileService.processFile(id).catch(err => {
         console.error(`Background processing failed for file ${id}:`, err)
       })
 
