@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
   return (
     <div className="fixed top-2 left-1/2 z-30 flex gap-x-50 items-center justify-between -translate-x-1/2 bg-zinc-900/40 backdrop-blur-md px-5 py-2 rounded-full border border-zinc-500/50 text-white">
       <div className="flex gap-x-4 items-center">
-        <img src={Artificialintelligence} className="w-6 h-6" alt="" />
+        <img src={Artificialintelligence} className="w-6 h-6" alt="LocalMind logo" />
         <h1 className="uppercase font-Satoshi tracking-wider font-bold text-xl">LocalMind</h1>
       </div>
 
