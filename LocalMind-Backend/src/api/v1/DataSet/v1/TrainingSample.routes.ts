@@ -16,6 +16,7 @@ router.use(UserMiddleware.middleware)
 // CRUD Endpoints
 router.post('/', TrainingSampleController.create)
 router.get('/', TrainingSampleController.getAll)
+router.post('/search', TrainingSampleController.search) // Semantic search endpoint
 router.get('/:id', TrainingSampleController.getOne)
 router.put('/:id', TrainingSampleController.update)
 router.delete('/:id', TrainingSampleController.delete)

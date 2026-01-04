@@ -90,6 +90,29 @@ class TrainingSampleController {
       SendResponse.error(res, 'Failed to delete training sample', 500, error)
     }
   }
+
+  /**
+   * POST /api/v1/training-samples/search
+   * Performs a semantic search using vector embeddings.
+   */
+  public async search(req: Request, res: Response): Promise<void> {
+    try {
+      const { query, topK, filters } = req.body
+      if (!query) {
+        return SendResponse.error(res, 'Search query is required', 400)
+      }
+
+      const results = await TrainingSampleService.vectorSearch(
+        query,
+        Number(topK) || 5,
+        filters || {}
+      )
+
+      SendResponse.success(res, 'Semantic search completed successfully', results)
+    } catch (error: any) {
+      SendResponse.error(res, 'Vector search failed', 500, error)
+    }
+  }
 }
 
 export default new TrainingSampleController()

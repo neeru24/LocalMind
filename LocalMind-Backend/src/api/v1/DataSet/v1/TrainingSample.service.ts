@@ -90,6 +90,41 @@ class TrainingSampleService {
   public async softDeleteSample(id: string): Promise<ITrainingSample | null> {
     return await TrainingSample.findByIdAndUpdate(id, { isActive: false }, { new: true })
   }
+
+  /**
+   * Vector Search - Finds the most semantically similar training samples.
+   * This uses the $vectorSearch aggregation stage (requires MongoDB Atlas Vector Search).
+   * @param queryText - The natural language query from the user.
+   * @param topK - Number of nearest neighbors to return.
+   * @param filters - Additional metadata filters.
+   */
+  public async vectorSearch(queryText: string, topK: number = 5, filters: any = {}) {
+    // 1. Convert the search query into a vector embedding
+    const queryVector = await EmbeddingUtils.generateEmbedding(queryText)
+
+    // 2. Build the aggregation pipeline for vector search
+    // Note: This assumes a vector index named "vector" is created on the collection
+    const pipeline: any[] = [
+      {
+        $vectorSearch: {
+          index: 'vector',
+          path: 'embedding',
+          queryVector: queryVector,
+          numCandidates: topK * 10, // Higher candidates improve accuracy
+          limit: topK,
+          filter: filters,
+        },
+      },
+      {
+        $project: {
+          embedding: 0, // Don't return the vector itself to save bandwidth
+          score: { $meta: 'vectorSearchScore' }, // Include the similarity score
+        },
+      },
+    ]
+
+    return await TrainingSample.aggregate(pipeline)
+  }
 }
 
 export default new TrainingSampleService()
