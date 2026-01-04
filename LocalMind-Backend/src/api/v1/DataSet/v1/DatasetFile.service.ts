@@ -1,0 +1,150 @@
+import { DatasetFile } from './DatasetFile.model'
+import { TrainingSample } from './TrainingSample.model'
+import { IDatasetFile } from './DataSet.type'
+import { EmbeddingUtils } from './Embedding.utils'
+import fs from 'fs'
+import path from 'path'
+import csv from 'csv-parser'
+import * as xlsx from 'xlsx'
+import pdf from 'pdf-parse'
+
+/**
+ * DatasetFileService - Manages the lifecycle of uploaded dataset files.
+ * This includes saving metadata, parsing content, and generating training samples.
+ */
+class DatasetFileService {
+  /**
+   * Saves the metadata of an uploaded file to the database.
+   */
+  public async saveFileMetadata(userId: string, file: Express.Multer.File): Promise<IDatasetFile> {
+    return await DatasetFile.create({
+      userId,
+      fileName: file.filename,
+      originalName: file.originalname,
+      mimeType: file.mimetype,
+      size: file.size,
+      path: file.path,
+      status: 'pending',
+    })
+  }
+
+  /**
+   * Processes an uploaded file based on its extension and creates TrainingSample records.
+   */
+  public async processFile(fileId: string): Promise<void> {
+    const fileRecord = await DatasetFile.findById(fileId)
+    if (!fileRecord) throw new Error('File record not found')
+
+    try {
+      await DatasetFile.findByIdAndUpdate(fileId, { status: 'processing' })
+
+      const ext = path.extname(fileRecord.originalName).toLowerCase()
+      let samples: any[] = []
+
+      // Route to the appropriate parser based on file extension
+      switch (ext) {
+        case '.json':
+          samples = await this.parseJson(fileRecord.path)
+          break
+        case '.csv':
+          samples = await this.parseCsv(fileRecord.path)
+          break
+        case '.txt':
+        case '.md':
+          samples = await this.parseText(fileRecord.path)
+          break
+        case '.xlsx':
+          samples = await this.parseExcel(fileRecord.path)
+          break
+        case '.pdf':
+          samples = await this.parsePdf(fileRecord.path)
+          break
+        default:
+          throw new Error(`No parser implemented for ${ext}`)
+      }
+
+      // Create TrainingSample records for each parsed item
+      let successCount = 0
+      for (const item of samples) {
+        try {
+          const embedding = await EmbeddingUtils.generateEmbedding(item.question)
+          await TrainingSample.create({
+            userId: fileRecord.userId,
+            question: item.question,
+            type: item.type || 'qa',
+            answerTemplate: {
+              answer: item.answer,
+              sections: [],
+              suggestions: [],
+            },
+            embedding,
+            sourceType: 'dataset',
+            datasetId: fileRecord._id,
+            tags: item.tags || [],
+          })
+          successCount++
+        } catch (err) {
+          console.error('Failed to process sample item:', err)
+        }
+      }
+
+      await DatasetFile.findByIdAndUpdate(fileId, {
+        status: 'completed',
+        rowCount: successCount,
+      })
+    } catch (error: any) {
+      console.error('File processing error:', error)
+      await DatasetFile.findByIdAndUpdate(fileId, {
+        status: 'failed',
+        error: error.message,
+      })
+    }
+  }
+
+  private async parseJson(filePath: string): Promise<any[]> {
+    const content = fs.readFileSync(filePath, 'utf-8')
+    const data = JSON.parse(content)
+    return Array.isArray(data) ? data : [data]
+  }
+
+  private async parseCsv(filePath: string): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      const results: any[] = []
+      fs.createReadStream(filePath)
+        .pipe(csv())
+        .on('data', (data) => results.push(data))
+        .on('end', () => resolve(results))
+        .on('error', (err) => reject(err))
+    })
+  }
+
+  private async parseText(filePath: string): Promise<any[]> {
+    const content = fs.readFileSync(filePath, 'utf-8')
+    // Simple chunking for text files: split by double newlines
+    const chunks = content.split(/\n\s*\n/).filter((c) => c.trim().length > 0)
+    return chunks.map((chunk) => ({
+      question: chunk.substring(0, 100) + '...', // Use start of chunk as "question"
+      answer: chunk,
+    }))
+  }
+
+  private async parseExcel(filePath: string): Promise<any[]> {
+    const workbook = xlsx.readFile(filePath)
+    const sheetName = workbook.SheetNames[0]
+    const worksheet = workbook.Sheets[sheetName]
+    return xlsx.utils.sheet_to_json(worksheet)
+  }
+
+  private async parsePdf(filePath: string): Promise<any[]> {
+    const dataBuffer = fs.readFileSync(filePath)
+    const data = await pdf(dataBuffer)
+    // Similar to text, split by double newlines
+    const chunks = data.text.split(/\n\s*\n/).filter((c) => c.trim().length > 0)
+    return chunks.map((chunk) => ({
+      question: chunk.substring(0, 100) + '...',
+      answer: chunk,
+    }))
+  }
+}
+
+export default new DatasetFileService()
