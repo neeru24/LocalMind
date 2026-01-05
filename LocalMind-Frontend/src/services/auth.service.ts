@@ -3,6 +3,7 @@ import { API_ENDPOINTS } from '../config/api.config'
 import type { SignUpPayload, AuthResponse, ApiError } from '../types/auth.types'
 
 const authApi = axios.create({
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },

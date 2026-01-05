@@ -20,9 +20,12 @@ const signUpSchema = z.object({
     .regex(/[A-Z]/, 'Must contain uppercase letter')
     .regex(/[a-z]/, 'Must contain lowercase letter')
     .regex(/[0-9]/, 'Must contain a number')
-    .regex(/[@$!%*?&]/, 'Must contain special character'),
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Must contain special character'),
   portfolioUrl: z.string().url('Please enter a valid URL').or(z.literal('')),
-  bio: z.string().max(50, 'Bio must be less than 50 characters'),
+  bio: z
+    .string()
+    .min(5, 'Bio must be at least 5 characters')
+    .max(50, 'Bio must be less than 50 characters'),
 })
 
 type FormData = z.infer<typeof signUpSchema>

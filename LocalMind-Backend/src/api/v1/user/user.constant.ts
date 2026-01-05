@@ -95,7 +95,7 @@ export const AllowedUserRoles = ['user', 'admin', 'creator'] as const
 
 export const PasswordConfig = {
   minLength: 8,
-  maxLength: 20,
+  maxLength: 128,
   saltRounds: 10,
 }
 
