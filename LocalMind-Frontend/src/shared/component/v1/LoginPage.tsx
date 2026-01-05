@@ -54,9 +54,9 @@ const LoginPage: React.FC = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-gray-300 text-xs sm:text-sm font-medium mb-2"
+                className="block text-gray-200 text-xs sm:text-sm font-semibold mb-2"
               >
-                Email Address
+                Email
               </label>
               <input
                 id="email"
@@ -64,7 +64,7 @@ const LoginPage: React.FC = () => {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#1a1a1a] border border-gray-600 rounded-lg text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition"
+                className="w-full px-4 py-2.5 bg-[#2a2a2a] border border-gray-600 rounded-lg text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition"
                 required
               />
             </div>
@@ -73,7 +73,7 @@ const LoginPage: React.FC = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-gray-300 text-xs sm:text-sm font-medium mb-2"
+                className="block text-gray-200 text-xs sm:text-sm font-semibold mb-2"
               >
                 Password
               </label>
@@ -83,12 +83,12 @@ const LoginPage: React.FC = () => {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#1a1a1a] border border-gray-600 rounded-lg text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition"
+                className="w-full px-4 py-2.5 bg-[#2a2a2a] border border-gray-600 rounded-lg text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition"
                 required
               />
 
               {/* Remember Me & Forgot Password */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mt-2 sm:mt-3">
+              <div className="flex flex-row items-center justify-between gap-2 mt-2 sm:mt-3">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -110,7 +110,7 @@ const LoginPage: React.FC = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-gray-300 hover:bg-gray-700 text-black font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition-colors duration-200 mt-4 sm:mt-5 md:mt-6"
+              className="w-full bg-gray-400 hover:bg-gray-500 text-black font-bold py-2.5 text-sm sm:text-base rounded-lg transition-colors duration-200 mt-6 sm:mt-7 md:mt-8"
             >
               Log In
             </button>
