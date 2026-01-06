@@ -2,7 +2,10 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import HomePage from '../../features/Dashboard/V1/Component/Pages/HomePage'
 import SignUp from '../../features/Auth/SignUp'
+<<<<<<< HEAD
 import LoginPage from '../../shared/component/v1/LoginPage'
+=======
+>>>>>>> 04466fa (feat: implement password reset system with mock email for development)
 import ForgotPassword from '../../features/Auth/ForgotPassword'
 import ResetPassword from '../../features/Auth/ResetPassword'
 
@@ -14,7 +17,10 @@ const AppRoutes: React.FC = () => {
 
       {/* Auth Pages */}
       <Route path="/signup" element={<SignUp />} />
+<<<<<<< HEAD
       <Route path="/login" element={<LoginPage />} />
+=======
+>>>>>>> 04466fa (feat: implement password reset system with mock email for development)
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
 
