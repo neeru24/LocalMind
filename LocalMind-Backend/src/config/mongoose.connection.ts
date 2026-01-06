@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import { env } from '../constant/env.constant'
 
-const mongooseConection = () => {
+const mongooseConnection = () => {
   mongoose
     .connect(env.DB_CONNECTION_STRING, {
       serverSelectionTimeoutMS: 5000,
@@ -11,8 +11,8 @@ const mongooseConection = () => {
     })
     .catch((err) => {
       console.log(err)
-      setTimeout(mongooseConection, 5000)
+      setTimeout(mongooseConnection, 5000)
     })
 }
 
-export default mongooseConection
+export default mongooseConnection
