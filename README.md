@@ -48,6 +48,8 @@ EmailService (Main Orchestrator)
 ┃
 ┗━━ 📊 Observability
     ┗━━ 📝 Logger ............. [Structured JSON Logging]
+```
+
   <br/><br/>
   <h1><b>LocalMind — AI Without Limits</b></h1>
   <p>
