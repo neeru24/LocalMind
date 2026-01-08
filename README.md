@@ -223,6 +223,7 @@ Share your LocalMind instance with anyone, anywhere:
 | --------------- | ----- | ------------- | -------- |
 | **LocalTunnel** | Fast  | ✅            | Basic    |
 | **Ngrok**       | Fast  | ✅ Pro        | Advanced |
+| **Cloudflared** | Fast  | ❌ Random     | Advanced |
 
 #### Benefits
 
@@ -1145,6 +1146,85 @@ Content-Type: application/json
 }
 ```
 
+#### Expose via Cloudflared
+
+```http
+POST /api/v1/expose/cloudflared
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "port": 3000
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Cloudflared tunnel started successfully",
+  "data": {
+    "url": "https://random-subdomain.trycloudflare.com",
+    "port": 3000,
+    "status": "active"
+  }
+}
+```
+
+#### Get Cloudflared Status
+
+```http
+GET /api/v1/expose/cloudflared/status
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+**Response (when active):**
+
+```json
+{
+  "success": true,
+  "message": "Tunnel status retrieved successfully",
+  "data": {
+    "active": true,
+    "url": "https://random-subdomain.trycloudflare.com",
+    "port": 3000,
+    "startedAt": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+**Response (when inactive):**
+
+```json
+{
+  "success": true,
+  "message": "Tunnel status retrieved successfully",
+  "data": {
+    "active": false
+  }
+}
+```
+
+#### Stop Cloudflared Tunnel
+
+```http
+DELETE /api/v1/expose/cloudflared/stop
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Cloudflared tunnel stopped successfully",
+  "data": {
+    "previousUrl": "https://random-subdomain.trycloudflare.com"
+  }
+}
+```
+
 #### Get Exposure Status
 
 ```http
@@ -1269,7 +1349,7 @@ eventSource.onerror = () => {
 }
 ```
 
-### Example 4: Expose Your AI Globally
+### Example 4: Expose Your AI Globally with LocalTunnel
 
 ```javascript
 // Start LocalTunnel
@@ -1281,6 +1361,7 @@ const exposeResponse = await fetch(`${API_URL}/expose/localtunnel`, {
   },
   body: JSON.stringify({
     subdomain: 'my-ai-demo',
+    port: 3000,
   }),
 })
 
@@ -1288,6 +1369,59 @@ const {
   data: { url },
 } = await exposeResponse.json()
 console.log(`Your AI is now accessible at: ${url}`)
+
+// Check status
+const statusResponse = await fetch(`${API_URL}/expose/localtunnel/status`, {
+  headers: { Authorization: `Bearer ${token}` },
+})
+const { data: status } = await statusResponse.json()
+
+// Stop when done
+await fetch(`${API_URL}/expose/localtunnel/stop`, {
+  method: 'DELETE',
+  headers: { Authorization: `Bearer ${token}` },
+})
+```
+
+### Example 5: Expose with Cloudflared
+
+```javascript
+// Start Cloudflared tunnel
+const tunnelResponse = await fetch(`${API_URL}/expose/cloudflared`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify({
+    port: 3000,
+  }),
+})
+
+const {
+  data: { url: tunnelUrl },
+} = await tunnelResponse.json()
+console.log(`Cloudflared tunnel active at: ${tunnelUrl}`)
+
+// Check status later
+const statusResponse = await fetch(`${API_URL}/expose/cloudflared/status`, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+})
+
+const { data: status } = await statusResponse.json()
+if (status.active) {
+  console.log(`Tunnel is running: ${status.url}`)
+}
+
+// Stop when done
+await fetch(`${API_URL}/expose/cloudflared/stop`, {
+  method: 'DELETE',
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+})
 ```
 
 ---
