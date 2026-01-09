@@ -275,14 +275,14 @@ git clone https://github.com/NexGenStudioDev/LocalMind.git
 cd LocalMind
 
 # Install dependencies
-cd server && npm install
-cd ../client && npm install
+cd LocalMind-Backend && npm install
+cd ../LocalMind-Frontend && npm install
 
 # Start the backend
-cd server && npm run dev
+cd LocalMind-Backend && npm run dev
 
 # Start the frontend (in a new terminal)
-cd client && npm run dev
+cd LocalMind-Frontend && npm run dev
 
 # Open http://localhost:5173
 ```
@@ -320,7 +320,7 @@ git --version   # Should show git version 2.x.x
 
 ```bash
 # Navigate to server directory
-cd server
+cd LocalMind-Backend
 
 # Install dependencies
 npm install
@@ -357,7 +357,7 @@ npm run test         # Run test suite
 
 ```bash
 # Navigate to client directory
-cd client
+cd LocalMind-Frontend
 
 # Install dependencies
 npm install
