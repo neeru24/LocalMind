@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import robotImg from '../../../assets/login.png'
 import aiImg from '../../../assets/Artificial intelligence.png'
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate()
   const glowStyles = `
     @keyframes glow {
       0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5)); }
@@ -16,11 +17,57 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle login logic here
-    console.log('Login submitted for email:', email)
+    setError('')
+    setSuccess('')
+    setLoading(true)
+
+    try {
+      const response = await fetch('/api/v1/user/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.message || 'Login failed. Please try again.')
+        setLoading(false)
+        return
+      }
+
+      // Store token in localStorage
+      if (data.data?.token) {
+        localStorage.setItem('token', data.data.token)
+        localStorage.setItem('user', JSON.stringify(data.data.user || {}))
+
+        // Store remember me preference
+        if (rememberMe) {
+          localStorage.setItem('rememberMe', 'true')
+          localStorage.setItem('savedEmail', email)
+        }
+
+        setSuccess('Login successful! Redirecting...')
+
+        // Redirect after brief delay
+        setTimeout(() => {
+          navigate('/dashboard')
+        }, 1000)
+      }
+    } catch (err) {
+      setError('An error occurred. Please check your connection and try again.')
+      console.error('Login error:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -50,6 +97,20 @@ const LoginPage: React.FC = () => {
             onSubmit={handleSubmit}
             className="space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6"
           >
+            {/* Error Message */}
+            {error && (
+              <div className="p-3 sm:p-4 bg-red-900 bg-opacity-30 border border-red-500 rounded-lg">
+                <p className="text-red-400 text-xs sm:text-sm">{error}</p>
+              </div>
+            )}
+
+            {/* Success Message */}
+            {success && (
+              <div className="p-3 sm:p-4 bg-green-900 bg-opacity-30 border border-green-500 rounded-lg">
+                <p className="text-green-400 text-xs sm:text-sm">{success}</p>
+              </div>
+            )}
+
             {/* Email Input */}
             <div>
               <label
@@ -64,8 +125,9 @@ const LoginPage: React.FC = () => {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full px-4 py-2.5 bg-[#2a2a2a] border border-gray-600 rounded-lg text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition"
+                className="w-full px-4 py-2.5 bg-[#2a2a2a] border border-gray-600 rounded-lg text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition disabled:opacity-50"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -83,8 +145,9 @@ const LoginPage: React.FC = () => {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-2.5 bg-[#2a2a2a] border border-gray-600 rounded-lg text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition"
+                className="w-full px-4 py-2.5 bg-[#2a2a2a] border border-gray-600 rounded-lg text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition disabled:opacity-50"
                 required
+                disabled={loading}
               />
 
               {/* Remember Me & Forgot Password */}
@@ -94,7 +157,8 @@ const LoginPage: React.FC = () => {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={e => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 bg-gray-700 border border-gray-600 rounded cursor-pointer accent-gray-500"
+                    className="w-4 h-4 bg-gray-700 border border-gray-600 rounded cursor-pointer accent-gray-500 disabled:opacity-50"
+                    disabled={loading}
                   />
                   <span className="text-gray-300 text-xs sm:text-sm">Remember me</span>
                 </label>
@@ -110,9 +174,17 @@ const LoginPage: React.FC = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-gray-400 hover:bg-gray-500 text-black font-bold py-2.5 text-sm sm:text-base rounded-lg transition-colors duration-200 mt-6 sm:mt-7 md:mt-8"
+              disabled={loading}
+              className="w-full bg-gray-400 hover:bg-gray-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-bold py-2.5 text-sm sm:text-base rounded-lg transition-colors duration-200 mt-6 sm:mt-7 md:mt-8 flex items-center justify-center gap-2"
             >
-              Log In
+              {loading ? (
+                <>
+                  <span className="inline-block w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+                  Logging in...
+                </>
+              ) : (
+                'Log In'
+              )}
             </button>
           </form>
 
@@ -128,7 +200,7 @@ const LoginPage: React.FC = () => {
         </div>
 
         {/* Right Section */}
-        <div className="bg-gradient-to-br from-gray-700 to-gray-900 p-0 flex items-center justify-center hidden md:flex overflow-hidden">
+        <div className="bg-gradient-to-br from-gray-700 to-gray-900 p-0 items-center justify-center hidden md:flex overflow-hidden">
           <img src={robotImg} alt="Robot" className="w-full h-full object-cover" />
         </div>
       </div>
