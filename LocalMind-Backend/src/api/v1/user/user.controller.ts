@@ -41,18 +41,9 @@ class UserController {
         throw new Error(UserConstant.EMAIL_ALREADY_EXISTS)
       }
 
-      // Convert undefined to null for optional fields to match IUser type
-      const userData: IUser = {
-        ...validatedData,
-        portfolioUrl: validatedData.portfolioUrl ?? null,
-        bio: validatedData.bio ?? null,
-      }
-
-      const user = await userService.createUser(userData)
-
+      const user = await userService.createUser(validatedData as any)
 
       const userObj = UserUtils.sanitizeUser(user)
-
 
       const token = UserUtils.generateToken({
         userId: String(user._id),
@@ -64,29 +55,25 @@ class UserController {
 
       SendResponse.success(res, UserConstant.CREATE_USER_SUCCESS, { userObj }, 201)
     } catch (err: any) {
-  if (err?.code === 11000) {
-    SendResponse.error(
-      res,
-      UserConstant.EMAIL_ALREADY_EXISTS,
-      StatusConstant.CONFLICT
-    )
-    return
-  }
+      if (err?.code === 11000) {
+        SendResponse.error(res, UserConstant.EMAIL_ALREADY_EXISTS, StatusConstant.CONFLICT)
+        return
+      }
 
-  SendResponse.error(
-    res,
-    err.message || UserConstant.CREATE_USER_FAILED,
-    StatusConstant.INTERNAL_SERVER_ERROR,
-    err
-  )
-}
+      SendResponse.error(
+        res,
+        err.message || UserConstant.CREATE_USER_FAILED,
+        StatusConstant.INTERNAL_SERVER_ERROR,
+        err
+      )
+    }
   }
 
   async login(req: Request, res: Response): Promise<void> {
     try {
       const validatedData = userLoginSchema.parse(req.body)
 
-      const user = await UserUtils.findByEmailandCheckPassword(validatedData)
+      const user = await UserUtils.findByEmailandCheckPassword(validatedData as any)
 
       const token = UserUtils.generateToken({
         userId: user.userObj._id || '',
